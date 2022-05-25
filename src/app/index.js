@@ -23,6 +23,7 @@ app.post('/mine',(req,res)=>{
     console.log(`New block added: ${block.toString()}`);
 
     res.redirect('/blocks');
+    p2pserver.syncChain();
 });
 
 p2pserver.listen();

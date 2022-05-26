@@ -18,23 +18,23 @@ const wallet = new Wallet(Date.now().toString());
 
 const transactionPool = new TransactionPool();
 
-const p2pserver = new P2pServer(blockchain, transactionPool);
+const p2pserver = new P2pServer(blockchain, transactionPool, wallet);
 
 
 app.get('/block', (req, res) => {
     res.json(blockchain.chain);
 })
 
-app.post('/mine',(req,res)=>{
-    const block = blockchain.addBlock(req.body.data);
-    console.log(`New block added: ${block.toString()}`);
-
-    res.redirect('/blocks');
-    p2pserver.syncChain();
-});
-
 app.get('/transaction', (req, res) => {
     res.json(transactionPool.transactions);
+});
+
+app.get("/public-key", (req,res) => {
+    res.json({ publicKey: wallet.publicKey });
+});
+
+app.get("/balance", (req, res) => {
+  res.json({ balance: blockchain.getBalance(wallet.publicKey) });
 });
 
 app.post('/transaction', (req, res) => {

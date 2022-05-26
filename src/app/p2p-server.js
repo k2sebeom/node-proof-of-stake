@@ -8,14 +8,16 @@ const peers = process.env.PEERS ? process.env.PEERS.split(',') : [];
 
 const MESSAGE_TYPE = {
     chain: 'CHAIN',
-    transaction: 'TRANSACTION'
+    transaction: 'TRANSACTION',
+    block: 'BLOCK'
 };
 
 class P2pserver{
-    constructor(blockchain, transactionPool){
+    constructor(blockchain, transactionPool, wallet){
         this.blockchain = blockchain;
         this.transactionPool = transactionPool;
         this.sockets = [];
+        this.wallet = wallet;
     }
 
     // create a new p2p server and connections
@@ -72,8 +74,22 @@ class P2pserver{
                     break;
                 case MESSAGE_TYPE.transaction:
                     if(!this.transactionPool.transactionExists(data.transaction)) {
-                        this.transactionPool.addTransaction(data.transaction);
+                        let thresholdReached = this.transactionPool.addTransaction(data.transaction);
                         this.broadcastTransaction(data.transaction);
+                        if(thresholdReached) {
+                            if(this.blockchain.getLeader() == this.wallet.publicKey) {
+                                let block = this.blockchain.createBlock(
+                                    this.transactionPool.transactions,
+                                    this.wallet
+                                );
+                                this.broadcastBlock(block);
+                            }
+                        }
+                    }
+                    break;
+                case MESSAGE_TYPE.block:
+                    if(this.blockchain.isValidBlock(data.block)) {
+                        this.broadcastBlock(data.block);
                     }
                     break;
             }
@@ -105,6 +121,21 @@ class P2pserver{
             type: MESSAGE_TYPE.transaction,
             transaction
         }));
+    }
+
+    broadcastBlock(block) {
+        this.sockets.forEach(socket => {
+            this.sendBlock(socket, block);
+        })
+    }
+
+    sendBlock(socket, block) {
+        socket.send(
+            JSON.stringify({
+                type: MESSAGE_TYPE.block,
+                block
+            })
+        );
     }
 }
 

@@ -1,3 +1,4 @@
+const { TRANSACTION_THRESHOLD } = require("../config");
 const Transaction = require("../transaction");
 
 
@@ -8,6 +9,7 @@ class TransactionPool {
 
     addTransaction(transaction) {
         this.transactions.push(transaction);
+        return this.transactions.length >= TRANSACTION_THRESHOLD;
     }
 
     validTransactions() {
@@ -18,6 +20,10 @@ class TransactionPool {
 
     transactionExists(transaction) {
         return this.transactions.find(t => t.id === transaction.id);
+    }
+
+    clear() {
+        this.transactions = [];
     }
 }
 

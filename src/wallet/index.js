@@ -21,6 +21,12 @@ class Wallet {
     }
 
     createTransaction(to, amount, type, blockchain, transactionPool) {
+        this.balance = blockchain.getBalance(this.publicKey);
+
+        if(amount > this.balance) {
+            return;
+        }
+
         let tx = Transaction.newTransaction(this, to, amount, type);
         transactionPool.addTransaction(tx);
         return tx;

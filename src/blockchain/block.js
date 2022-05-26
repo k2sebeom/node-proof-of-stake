@@ -29,13 +29,21 @@ class Block {
         return ChainUtil.hash(`${timestamp}${lastHash}${data}`);
     }
 
-    static createBlock(lastBlock, data) {
+    static signBlockHash(hash, wallet) {
+        return wallet.sign(hash);
+    }
+
+    static createBlock(lastBlock, transactions, wallet) {
         let hash;
         let timestamp = Date.now();
         const lastHash = lastBlock.hash;
-        hash = Block.hash(timestamp, lastHash, data);
+        hash = Block.hash(timestamp, lastHash, transactions);
 
-        return new this(timestamp, lastHash, hash, data);
+        let validator = wallet.publicKey;
+
+        let signature = Block.signBlockHash(hash, wallet);
+    
+        return new this(timestamp, lastHash, hash, transactions, validator, signature);
     }
 }
 

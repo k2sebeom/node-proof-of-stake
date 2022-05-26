@@ -33,7 +33,7 @@ app.post('/mine',(req,res)=>{
     p2pserver.syncChain();
 });
 
-app.get('/transactions', (req, res) => {
+app.get('/transaction', (req, res) => {
     res.json(transactionPool.transactions);
 });
 

@@ -17,7 +17,7 @@ class Wallet {
     }
 
     sign(dataHash) {
-        return this.keyPair.sign(dataHash);
+        return this.keyPair.sign(dataHash).toHex();
     }
 
     createTransaction(to, amount, type, blockchain, transactionPool) {

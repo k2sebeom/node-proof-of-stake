@@ -34,9 +34,7 @@ app.post('/mine',(req,res)=>{
 });
 
 app.get('/transactions', (req, res) => {
-    res.json(transactionPool.transactions.map(tx => ({
-        id: tx.id, type: tx.type, output: tx.output
-    })));
+    res.json(transactionPool.transactions);
 });
 
 app.post('/transaction', (req, res) => {

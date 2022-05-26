@@ -1,9 +1,11 @@
+const { INITIAL_BALANCE } = require('../config');
+const Transaction = require('../transaction');
 const ChainUtil = require('../utils/chain');
 
 
 class Wallet {
     constructor(secret) {
-        this.balance = 0;
+        this.balance = INITIAL_BALANCE;
         this.keyPair = ChainUtil.genKeyPair(secret);
         this.publicKey = this.keyPair.getPublic("hex");
     }
@@ -16,6 +18,12 @@ class Wallet {
 
     sign(dataHash) {
         return this.keyPair.sign(dataHash);
+    }
+
+    createTransaction(to, amount, type, blockchain, transactionPool) {
+        let tx = Transaction.newTransaction(this, to, amount, type);
+        transactionPool.addTransaction(tx);
+        return tx;
     }
 }
 

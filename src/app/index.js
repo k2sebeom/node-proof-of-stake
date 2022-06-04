@@ -33,6 +33,10 @@ app.get("/public-key", (req,res) => {
     res.json({ publicKey: wallet.publicKey });
 });
 
+app.get("/validators", (req, res) => {
+    res.json({ validators: blockchain.validators });
+})
+
 app.get("/balance", (req, res) => {
   res.json({ balance: blockchain.getBalance(wallet.publicKey) });
 });
@@ -43,6 +47,7 @@ app.post('/transaction', (req, res) => {
     p2pserver.broadcastTransaction(tx);
     res.redirect('/transactions');
 })
+
 
 p2pserver.listen();
 

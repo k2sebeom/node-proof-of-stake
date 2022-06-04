@@ -90,6 +90,7 @@ class P2pserver{
                 case MESSAGE_TYPE.block:
                     if(this.blockchain.isValidBlock(data.block)) {
                         this.broadcastBlock(data.block);
+                        this.transactionPool.clear();
                     }
                     break;
             }

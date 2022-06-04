@@ -1,8 +1,6 @@
 const EDDSA = require("elliptic").eddsa;
 const uuidV1 = require('uuid').v1;
 const SHA256 = require('crypto-js/sha256');
-const { ec } = require("elliptic");
-
 
 const eddsa = new EDDSA("ed25519");
 
@@ -20,7 +18,7 @@ class ChainUtil {
     }
 
     static verifySignature(publicKey, signature, dataHash) {
-        return ec.keyFromPublic(publicKey).verify(dataHash, signature);
+        return eddsa.keyFromPublic(publicKey).verify(dataHash, signature);
     }
 }
 

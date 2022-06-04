@@ -3,6 +3,12 @@ const Block = require('./block');
 const Stake = require('./stake');
 const Validators = require('./validators');
 
+const TRANSACTION_TYPE = {
+    transaction: "TRANSACTION",
+    stake: "STAKE",
+    validator_fee: "VALIDATOR_FEE"
+};
+
 class Blockchain{
     constructor(){
         this.chain = [Block.genesis()];
@@ -92,6 +98,7 @@ class Blockchain{
         ) {
             console.log("block valid");
             this.addBlock(block);
+            this.executeTransactions(block);
             return true;
         } else {
             return false;

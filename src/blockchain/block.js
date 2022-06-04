@@ -29,6 +29,11 @@ class Block {
         return ChainUtil.hash(`${timestamp}${lastHash}${data}`);
     }
 
+    static blockHash(block) {
+        const {timestamp, lastHash, data} = block;
+        return Block.hash(timestamp, lastHash, data);
+    }
+
     static signBlockHash(hash, wallet) {
         return wallet.sign(hash);
     }
@@ -44,6 +49,18 @@ class Block {
         let signature = Block.signBlockHash(hash, wallet);
     
         return new this(timestamp, lastHash, hash, transactions, validator, signature);
+    }
+
+    static verifyBlock(block) {
+        return ChainUtil.verifySignature(
+          block.validator,
+          block.signature,
+          Block.hash(block.timestamp, block.lastHash, block.data)
+        );
+      }
+
+    static verifyLeader(block, leader) {
+        return block.validator == leader ? true : false;
     }
 }
 
